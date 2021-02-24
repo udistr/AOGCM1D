@@ -132,6 +132,8 @@ evap = -tau.*qstar/rhoConstFresh;
 ch=rd*rh
 ce=rd*re
 
-return hl,hs,evap,ch,ce,tau,ssq,huol,rd,re,rh,ustar,qstar,tstar,psimh,psixh
+wstress=atmrho*ustar^2
+
+return hl,hs,evap,ch,ce,wstress,ssq,huol,rd,re,rh,ustar,qstar,tstar,psimh,psixh
 
 end

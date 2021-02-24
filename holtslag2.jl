@@ -4,7 +4,7 @@ include("holtslag_psim.jl")
 include("holtslag_psis.jl")
 include("holtslag_local.jl")
 
-function holtslag(θv,U,V,LH,SH,ustar,ρA,ZF)
+function holtslag2(θv,U,V,LH,SH,ustar,ρA,ZF)
 # a vertical diffusion scheme based on Holtslag and Boville (1993)
 # Includes enhenced diffusion below the PBL
 #θv-virtual potential temperature
@@ -19,32 +19,23 @@ DZ=diff(ZF,dims=1);
 ZM=Z-DZ./2;
 SZM=length(ZM);
 
-ZD=[Z[1]:0.01*(Z[1]):Z[end];]
-
 #wθv-surface virtual heat flux, positive upward
 wθv=SH./ρA./cpa.+humid_fac.*θv[1].*LH./ρA./Av;
 
 #TF=(SH+LH)./ρA./cpa;
 ustar=abs(ustar)
 L=-θv[1].*ustar.^3 ./(karman.*gravity_mks.*wθv);
-HD=ZD./L;
 H=ZF[2:end]./L;
 
-# function to calculate velocity VelocityScale
-
 # surface velocity scale
-out=VelocityScale.(0.1*ZD,ZD,L,ustar,θv[1],wθv)
+out=VelocityScale.(0.1*Z,Z,L,ustar,θv[1],wθv)
 ws=map(x->x[1], out)
 wm=map(x->x[2], out)
 
 θs=θv[1].+max.(b.*wθv./ws,0);
 
-# interpolation to high resolution
-spl = Spline1D(ZM, U); UD=spl(ZD);
-spl = Spline1D(ZM, V);  VD=spl(ZD);
-spl = Spline1D(ZM, θv); TD=spl(ZD);
 #calculate PBLH at high resolution
-ha=(Rcrit.*θs.*(UD.^2+VD.^2)./(gravity_mks.*(TD-θs)))-ZD;
+ha=(Rcrit.*θs.*(U.^2+V.^2)./(gravity_mks.*(θv-θs)))-Z;
 ha[ha.>0].=Inf;
 if all(isinf.(ha))
     if wθv>0
@@ -56,17 +47,17 @@ else
     ~,id=findmin(abs.(ha));
 end
 id=max(id,1);
-h=abs(ZD[id[1]]);
+h=abs(Z[id[1]]);
 # n - levels inside PBL
-n=(h.-ZF).*((h.-ZF).>0);
-n[n.==0].=Inf;
+n=(h.-Z).*((h.-Z).>0);
+n[n.==0].=1e6;
 ~,i=findmin(n);
 # frac - fraction of the upper PBL level that is indide the PBL
 frac=(h-ZF[i])./DZ[i];
 
 # nsl - levels inside surface layer
 nsl=(0.1 .*h.-ZF).*((0.1 .*h.-ZF).>0);
-nsl[nsl.==0].=Inf;
+nsl[nsl.==0].=1e6;
 ~,isl=findmin(nsl);
 
 #ipbl - levels inside the PBL

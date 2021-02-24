@@ -1,6 +1,5 @@
 # AOGCM1D.jl
 
-
 A code for a simple 1D coupled ocean-atmosphere model.
 
 Prognostic variables:
@@ -18,3 +17,7 @@ Large and Yeager (1994) for the ocean
 Holtslag and Boville (1993) for the atmosphere
 Bulk formulea for the air-sea interface based on Large and Yeager (2004)
 Solar radiation including transmision to the deeper ocean
+
+## Issues
+
+sum of ocean SW not equal 1

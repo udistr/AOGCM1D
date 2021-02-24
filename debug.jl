@@ -1,0 +1,3 @@
+include("VelocityScale.jl")
+
+VelocityScale(125,750,-17.07,0.223,300.9113701541558,0.04974920123242903)

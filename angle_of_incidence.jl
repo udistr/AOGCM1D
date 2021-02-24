@@ -4,7 +4,7 @@ function angle_of_incidence(lat,lon,jd,time)
 #   a given location (lat,lon), julian day (jd) and time in hours and fraction of hours.
 
 # inclination angle
-delta=(asin(-sin(23.45/180*pi).*cos(360/365.25*(jd+10)/180*pi)));
+delta=(asin(-sin(23.45/180*pi)*cos(360/365.25*(jd+10)/180*pi)));
 # lat to radians
 lamda=lat/180*pi;
 # time to radians

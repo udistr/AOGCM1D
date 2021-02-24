@@ -1,8 +1,10 @@
 function holtslag_psis(xi)
-if xi>0
+if (xi>=0) & (xi<=1.)
     y=1+5*xi;
-else
-    y=(1-16*xi)^(-1/2);
+elseif xi>=1
+    y=5+xi
+else xi<0
+    y=(1-15*xi)^(-1/2)
 end
 return y
 end
