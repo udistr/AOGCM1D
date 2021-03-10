@@ -25,6 +25,7 @@ sw=zeros(n)
 lw=zeros(n)
 lh=zeros(n)
 sh=zeros(n)
+sst=zeros(n)
 for i=2:n+1
 
     global mtime
@@ -51,4 +52,5 @@ for i=2:n+1
     lw[i-1]=LW
     lh[i-1]=LH
     sh[i-1]=SH
+    sst[i-1]=SST
 end

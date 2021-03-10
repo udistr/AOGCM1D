@@ -11,13 +11,18 @@ Grid:
 height coordinates
 Processess included:
 
-vertical advaction, explicit integration
-vetical diffustion:
-Large and Yeager (1994) for the ocean
-Holtslag and Boville (1993) for the atmosphere
-Bulk formulea for the air-sea interface based on Large and Yeager (2004)
-Solar radiation including transmision to the deeper ocean
+* Vertical advaction, explicit integration
+* Vetical diffustion:
+  * Large and Yeager (1994) for the ocean
+  * Holtslag and Boville (1993) for the atmosphere
+* Bulk formulea for the air-sea interface based on Large and Yeager (2004)
+* Solar radiation including transmision to the deeper ocean
+* Condensation and deposition of super-saturated water vapor
 
-## Issues
+## Issues/todo
 
-sum of ocean SW not equal 1
+* holtslag scheme noisy and boundary layer seems too shallow
+* sum of ocean SW not equal 1
+* improve performance
+* restart
+* documentation

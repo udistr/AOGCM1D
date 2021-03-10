@@ -42,7 +42,7 @@ function ForwardStep(mtime)
   LH=-hl;
   SH=-hs;
   E=-hl/Av;
-  ϵa=0.725+0.17*log10(sum(qA[1,:]/1000*1.2*ΔZA)*100)
+  ϵa=0.725+0.17*log10(sum(qA/1000*1.2*ΔZA)*100)
   LW=emissivity*sb*((SST+d2k).^4 .- ϵa.*(TAup).^4);
   TAU=ρA[1].*ustar.^2 .*sign(ustar);
   Qnet=SW[1]-LH-SH-LW;
@@ -52,8 +52,9 @@ function ForwardStep(mtime)
   # Atmospheric vertical diffusion
   ########################################################################
   Θv=ΘA.*(1 .+humid_fac*qA);
-  KAm,KAt=holtslag(Θv,UA,UA.*0,LH,SH,ustar,ρA[1],ZAF);
-
+  KAm,KAt,γcq,γct,γcm=holtslag(Θv,UA,UA.*0,LH,SH,ustar,ρA[1],ZAF);
+  KAm,KAt,γcq,γct,γcm=holtslag(Θv,UA,UA.*0,LH,SH,ustar,ρA[1],ZAF);
+  #println("----",maximum(γct),"----")
   ########################################################################
   # Oceanic vertical diffusion
   ########################################################################
@@ -75,19 +76,25 @@ function ForwardStep(mtime)
       KAm[2:end-1].*(UA[2:end-1]-UA[3:end  ])/ΔZA^2*ΔT);
 
   qAst[1]=qA[1]-E/(ΔZA*ρO[1])*ΔT-
-      (1-Aimp)*(KAt[1]*(qA[1]-qA[2])/ΔZA^2*ΔT);
-  qAst[end]=qA[end]-(1-Aimp)*(KAt[end]*(qA[end]-q0)/ΔZA^2*ΔT);
+      (1-Aimp)*(KAt[1]*(qA[1]-qA[2])/ΔZA^2*ΔT+
+      (-γcq[1].*KAt[1])/ΔZA*ΔT);
+  qAst[end]=qA[end]-(1-Aimp)*(KAt[end]*(qA[end]-q0)/ΔZA^2*ΔT+
+      (γcq[end-1].*KAt[end-1]-γcq[end].*KAt[end])/ΔZA*ΔT);
   qAst[2:end-1]=qA[2:end-1]+(1-Aimp)*(
       KAt[1:end-2].*(qA[1:end-2]-qA[2:end-1])/ΔZA^2*ΔT-
-      KAt[2:end-1].*(qA[2:end-1]-qA[3:end  ])/ΔZA^2*ΔT);
+      KAt[2:end-1].*(qA[2:end-1]-qA[3:end  ])/ΔZA^2*ΔT+
+      (γcq[1:end-2].*KAt[1:end-2]-γcq[2:end-1].*KAt[2:end-1])/ΔZA*ΔT);
 
   ΘAst[1]=ΘA[1]+(SH)/cpa/(ΔZA*qA[1])*ΔT-
-        (1-Aimp)*(KAt[1]*(ΘA[1]-ΘA[2])/ΔZA^2*ΔT);
+        (1-Aimp)*(KAt[1]*(ΘA[1]-ΘA[2])/ΔZA^2*ΔT+
+        (-γct[1].*KAt[1])/ΔZA*ΔT);
   ΘAst[end]=ΘA[end]-
-        (1-Aimp)*(KAt[end]*(ΘA[end]-ΘA0)/ΔZA^2*ΔT);
+        (1-Aimp)*(KAt[end]*(ΘA[end]-ΘA0)/ΔZA^2*ΔT+
+        (γct[end-1].*KAt[end-1]-γct[end].*KAt[end])/ΔZA*ΔT);
   ΘAst[2:end-1]=ΘA[2:end-1]+(1-Aimp)*(
         KAt[1:end-2].*(ΘA[1:end-2]-ΘA[2:end-1])/ΔZA^2*ΔT-
-        KAt[2:end-1].*(ΘA[2:end-1]-ΘA[3:end  ])/ΔZA^2*ΔT);
+        KAt[2:end-1].*(ΘA[2:end-1]-ΘA[3:end  ])/ΔZA^2*ΔT+
+        (γct[1:end-2].*KAt[1:end-2]-γct[2:end-1].*KAt[2:end-1])/ΔZA*ΔT);
 
   ########################################################################
   # Oceanic explicit time stepping

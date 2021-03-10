@@ -13,6 +13,7 @@ Rcrit=0.5;
 b=8.5
 eps=0.1;
 minshear=0.003
+d=10
 
 Z=ZF[2:end];
 DZ=diff(ZF,dims=1);
@@ -81,10 +82,11 @@ end
 kM=zeros(SZM); kS=zeros(SZM);
 wm=zeros(SZM); wt=zeros(SZM);
 
-out=VelocityScale.(ZM[ipbl],h,L,ustar,θv[ipbl],wθv)
+out=VelocityScale.(ZM[ipbl],h,L,ustar,θv[1],wθv)
 
 wt[ipbl]=map(x->x[1], out)
 wm[ipbl]=map(x->x[2], out)
+wstar=((gravity_mks/θv[1])*wθv*(wθv>0)*h)^(1/3)
 
 kS[ipbl]=karman.*wt[ipbl].*min.(ZM[ipbl],h).*(1 .- min.(ZM[ipbl]/h,1)).^2
 kM[ipbl]=karman.*wm[ipbl].*min.(ZM[ipbl],h).*(1 .- min.(ZM[ipbl]/h,1)).^2
@@ -103,8 +105,14 @@ lc=30
 i2=min(i+1,SZM)
 kM[npbl]=kM[npbl]+lc.^2 .*S[npbl].*fm[npbl];
 kS[npbl]=kM[npbl]+lc.^2 .*S[npbl].*fm[npbl];
+
+γcq=a*(LH./ρA./Av)/wm.^2*wstar/h
+γct=a*(SH./ρA./cpa)/wm.^2*wstar/h
+γcm=a*(ustar^2)/wstar*wm.^2/h
+
+
 println(h)
-return kM,kS
+return kM,kS,γcq,γct,γcm
 #[i max(kM) max(kS) wθv max(Ts) U(1)]
 
 end
