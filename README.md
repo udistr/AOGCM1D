@@ -26,3 +26,11 @@ Processess included:
 * improve performance
 * restart
 * documentation
+
+## Directions
+
+```
+git clone https://github.com/udistr/AOGCM1D.jl
+julia --project=AOGCM1D.jl -e 'using Pkg; Pkg.instantiate(); include("AOGCM1D.jl/AOGCM1D.jl")'
+```
+
