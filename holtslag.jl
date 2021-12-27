@@ -106,6 +106,8 @@ i2=min(i+1,SZM)
 kM[npbl]=kM[npbl]+lc.^2 .*S[npbl].*fm[npbl];
 kS[npbl]=kM[npbl]+lc.^2 .*S[npbl].*fm[npbl];
 
+a=7.2
+
 γcq=a*(LH./ρA./Av)/wm.^2*wstar/h
 γct=a*(SH./ρA./cpa)/wm.^2*wstar/h
 γcm=a*(ustar^2)/wstar*wm.^2/h
